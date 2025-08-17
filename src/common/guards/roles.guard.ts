@@ -1,6 +1,14 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  SetMetadata,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from '../../users/users.entity';
+
+// Decorador para marcar los roles permitidos en cada ruta
+export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -11,12 +19,14 @@ export class RolesGuard implements CanActivate {
       'roles',
       context.getHandler(),
     );
-    if (!requiredRoles) return true;
+    if (!requiredRoles || requiredRoles.length === 0) return true;
 
     const request = context.switchToHttp().getRequest<{
       user: { role: UserRole };
     }>();
     const { user } = request;
+
+    if (!user) return false;
     return requiredRoles.includes(user.role);
   }
 }
