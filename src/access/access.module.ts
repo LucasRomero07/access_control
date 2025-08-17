@@ -4,6 +4,6 @@ import { AccessService } from './access.service';
 
 @Module({
   controllers: [AccessController],
-  providers: [AccessService]
+  providers: [AccessService],
 })
 export class AccessModule {}
